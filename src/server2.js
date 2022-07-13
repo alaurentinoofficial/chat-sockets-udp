@@ -6,14 +6,17 @@ const socketManager = new SocketManager()
 net.createServer(function (socket) {
     let socketId = socketManager.addClientConnection(socket);
 
-    console.log(`Connected client ${socketId}`);
+    console.log(`[SERVER] New socket client "${socketId}"`);
 
     socket.on('data', function (data) {
         socketManager.broadcastMessage(data.toString(), socketId)
     });
 
     socket.on('close', function () {
-        try { socketManager.removeClientConnection(socketId); }
+        try {
+            socketManager.removeClientConnection(socketId);
+            console.log(`[SERVER] Socket "${socketId}" client left`);
+        }
         catch(e) { console.error(`[ERROR] Connection not found "${socketId}"`) }
     });
 })
