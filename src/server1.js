@@ -29,7 +29,6 @@ net.createServer(function (socket) {
 
     socket.on('close', function () {
         console.log('socket', socketId, 'closed');
-        delete entries[socketId];
     });
 })
 .listen(8080);

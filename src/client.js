@@ -13,7 +13,7 @@ rl.question('What is your name ? ', function (name) {
     socket.on('data', function(data){
         try {
             let payload = JSON.parse(data.toString())
-            console.log(`[${payload.name}]: ${payload.msg}`);
+            console.log(`\n[${payload.name}]: ${payload.msg}`);
         } catch (e) {}
     });
 

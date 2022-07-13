@@ -1,20 +1,20 @@
 const net = require("net");
-const uuid = require('uuid');
+const SocketManager = require("./socket_manager");
 
-entries = {}
+const socketManager = new SocketManager()
 
 net.createServer(function (socket) {
-    console.log("connected");
+    let socketId = socketManager.addClientConnection(socket);
+
+    console.log(`Connected client ${socketId}`);
 
     socket.on('data', function (data) {
-        try {
-            let payload = JSON.parse(data.toString())
-            console.log(`[${payload.name}] ${payload.msg}`);
-        } catch (e) {}
+        socketManager.broadcastMessage(data.toString(), socketId)
     });
 
     socket.on('close', function () {
-        delete entries[socketId];
+        try { socketManager.removeClientConnection(socketId); }
+        catch(e) { console.error(`[ERROR] Connection not found "${socketId}"`) }
     });
 })
 .listen(8080);
