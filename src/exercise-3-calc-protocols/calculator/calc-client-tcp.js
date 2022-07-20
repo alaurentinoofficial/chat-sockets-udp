@@ -13,7 +13,7 @@ socket.connect(4040);
 // Client
 (function Client() {
     rl.question('Calculation: ', function (txt) {
-        let match = txt.match(/^(\d+)([+-\/*])(\d+)$/)
+        let match = txt.match(/^([-]{0,1}\d+)([+-\/*])([-]{0,1}\d+)$/)
 
         if(match) {
             const params = match.slice(1, 4)

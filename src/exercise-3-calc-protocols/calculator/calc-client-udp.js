@@ -12,7 +12,7 @@ let socket = UdpClient("localhost", 4040);
 // Client
 (function Client() {
     rl.question('Calculation: ', function (txt) {
-        let match = txt.match(/^(\d+)([+-\/*])(\d+)$/)
+        let match = txt.match(/^([-]{0,1}\d+)([+-\/*])([-]{0,1}\d+)$/)
 
         if(match) {
             const params = match.slice(1, 4)
@@ -23,9 +23,11 @@ let socket = UdpClient("localhost", 4040);
             }).then(p => {
                 if(p.status == "ERROR") console.error(p.message);
                 else console.log(`\n[SERVER] The result of ${p.n1}${p.operation}${p.n2}: ${p.result}`);
+            }).catch(error => {
+                console.error(error)
             });
         } else {
-            console.error(`[Calc UDP] the typed value "${data}" is invalid`
+            console.error(`[Calc UDP] the typed value "${txt}" is invalid`
                           + "\nAvailable operations:"
                           + "\n\tSum: '<number>+<number>'"
                           + "\n\tMinus: '<number>-<number>'"

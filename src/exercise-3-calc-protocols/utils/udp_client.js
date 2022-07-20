@@ -9,7 +9,7 @@ module.exports = function(address, port) {
         },
 
         on: (event, cb) => {
-            udpSocket.on(event, cb);
+            udpSocket.on((event == "data") ? "message" : event, cb);
         },
     }
 }
