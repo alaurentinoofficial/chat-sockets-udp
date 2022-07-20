@@ -1,35 +1,13 @@
 const net = require("net");
-const readline = require('readline');
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-
-let CalcOperations = {
-    "+": (a, b) => a + b,
-    "-": (a, b) => a - b,
-    "*": (a, b) => a * b,
-    "/": (a, b) => a / b,
-}
-
-function calculation(socket, data) {
-    try {
-        let payload = JSON.parse(data.toString())
-
-        if(Object.keys(CalcOperations).includes(payload.operation)) {
-            result = CalcOperations[payload.operation](payload.n1, payload.n2);
-
-            socket.write(JSON.stringify({
-                result,
-                calculation: payload
-            }));
-        }
-    } catch (e) { console.log(e) }
-}
+const { marshaller, unmarshaller } = require('../utils/encoding')
+const { CalculatorInvokeHandler } = require("./server_invoke_handler")
 
 net.createServer(function (socket) {
-    socket.on('data', function(data){
-        calculation(socket, data);
+    socket.on('data', (data) => {
+        let payload = unmarshaller(data.toString());
+        let response = CalculatorInvokeHandler(payload);
+
+        socket.write(marshaller(response));
     });
 })
 .listen(4040);

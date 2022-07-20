@@ -1,4 +1,5 @@
 const net = require("net");
+const { CalculateInvoker } = require('./client_invoke_handler')
 
 const readline = require('readline');
 const rl = readline.createInterface({
@@ -9,37 +10,32 @@ const rl = readline.createInterface({
 const socket = net.Socket();
 socket.connect(4040);
 
-socket.on('data', (data) => {
-    try {
-        let p = JSON.parse(data.toString())
-        console.log(`The result of ${p.calculation.n1}${p.calculation.operation}${p.calculation.n2}: ${p.result}`);
-    } catch (e) {console.log(e)}
-});
-
-function sendToCalcServer(socket, data) {
-    let match = data.match(/^(\d+)([+-\/*])(\d+)$/)
-
-    if(match) {
-        let params = match.slice(1, 4);
-
-        socket.write(JSON.stringify({
-            n1: Number(params[0]),
-            operation: params[1],
-            n2: Number(params[2])
-        }))
-    } else {
-        console.error(`[Calc UDP] the typed value "${data}" is invalid`
-                      + "\nAvailable operations:"
-                      + "\n\tSum: '<number>+<number>'"
-                      + "\n\tMinus: '<number>-<number>'"
-                      + "\n\tMultiplication: '<number>*<number>'"
-                      + "\n\tDivide: '<number>/<number>'\n")
-    }
-}
-
-(function writeMessage() {
+// Client
+(function Client() {
     rl.question('Calculation: ', function (txt) {
-        sendToCalcServer(socket, txt);
-        writeMessage();
+        let match = txt.match(/^(\d+)([+-\/*])(\d+)$/)
+
+        if(match) {
+            const params = match.slice(1, 4)
+            const p = CalculateInvoker(socket, {
+                n1: params[0],
+                operation: params[1],
+                n2: params[2]
+            }).then(p => {
+                if(p.status == "ERROR") console.error(p.message);
+                else console.log(`\n[SERVER] The result of ${p.n1}${p.operation}${p.n2}: ${p.result}`);
+            }).catch(error => {
+                console.error(error)
+            });
+        } else {
+            console.error(`[Calc UDP] the typed value "${data}" is invalid`
+                          + "\nAvailable operations:"
+                          + "\n\tSum: '<number>+<number>'"
+                          + "\n\tMinus: '<number>-<number>'"
+                          + "\n\tMultiplication: '<number>*<number>'"
+                          + "\n\tDivide: '<number>/<number>'\n")
+        }
+
+        Client();
     });
 })()
