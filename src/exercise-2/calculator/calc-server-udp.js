@@ -1,4 +1,4 @@
-const UdpManager = require('./udp_manager');
+const UdpManager = require('../utils/udp_manager');
 const readline = require('readline');
 const rl = readline.createInterface({
     input: process.stdin,

@@ -1,27 +1,22 @@
-const udp = require('dgram');
-const UdpClient = require('./udp_client');
-
+const UdpManager = require('../utils/udp_manager');
 const readline = require('readline');
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-let socket = UdpClient();
-socket.connect("localhost", 4040);
+UdpManager((socket) => {
+    socket.onMessage((data) => {
+        try {
+            let payload = JSON.parse(data.toString())
+            console.log(`${payload.name}: ${payload.msg}`);
+        } catch (e) {}
+    });
 
-socket.onMessage((data) => {
-    try {
-        let payload = JSON.parse(data.toString())
-        console.log(`${payload.name}: ${payload.msg}`);
-    } catch (e) {}
-});
-
-rl.question('What is your name ? ', function (name) {
     (function writeMessage() {
         rl.question('> ', function (msg) {
             socket.write(JSON.stringify({
-                name: name,
+                name: "Server",
                 msg: msg,
                 timestamp: new Date().toISOString()
             }));
@@ -29,4 +24,4 @@ rl.question('What is your name ? ', function (name) {
             writeMessage();
         });
     })()
-});
+}).bind(4040);

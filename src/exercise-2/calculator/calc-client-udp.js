@@ -1,5 +1,5 @@
 const udp = require('dgram');
-const UdpClient = require('./udp_client');
+const UdpClient = require('../utils/udp_client');
 
 const readline = require('readline');
 const rl = readline.createInterface({
