@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+message Formula {
+  enum OperationEnum {
+    SUM = 0;
+    SUB = 1;
+    MUL = 2;
+    DIV = 3;
+  }
+
+  required int64 number1 = 1;
+  required int64 number2 = 2;
+  required OperationEnum operation = 3;
+}
+
+message Result {
+  required int64 value = 1;
+}
+
+service AdvancedCalculator {
+  rpc calculate (Formula) returns (Result) {}
+}
