@@ -8,7 +8,7 @@ message ConversationMessage {
   }
 
   required MessageType type = 1;
-  required string nickname = 2;
+  optional string nickname = 2;
   optional string message = 3;
 }
 

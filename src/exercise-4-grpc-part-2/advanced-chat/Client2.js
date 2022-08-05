@@ -59,7 +59,6 @@ rl.question('What is your name ? ', function (name) {
         rl.question('', function (message) {
             call.write({
                 type: "MESSAGE",
-                nickname: name,
                 message: message
             });
 
