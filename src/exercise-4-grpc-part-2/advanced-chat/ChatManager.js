@@ -21,25 +21,46 @@ module.exports = function() {
         delete entries[stubId];
     }
 
-    function sendMessage(stubId, message) {
+    function notify(stubId, message) {
         const conn = entries[stubId];
-        if(conn) conn.stub.write(message);
+        if(conn) conn.stub.write({
+            type: "NOFICATION",
+            name: "",
+            message: message
+        });
+    }
+
+    function broadcastNotify(message, ingnoreStubId = null) {
+        broadcast({
+            type: "NOFICATION",
+            nickname: "Server",
+            message: message
+        }, ingnoreStubId);
+    }
+
+    function broadcastMessage(payload, ingnoreStubId = null) {
+        broadcast({
+            type: "MESSAGE",
+            nickname: payload.nickname,
+            message: payload.message
+        }, ingnoreStubId);
     }
     
-    function broadcastMessage(message, ingnoreStubId = null) {
+    function broadcast(payload, ingnoreStubId = null) {
         Object.entries(entries).forEach(entry => {
             const [id, conn] = entry;
     
             if (id != ingnoreStubId)
-            conn.stub.write(message);
+            conn.stub.write(payload);
         })
     }
 
     return {
         addClientConnection: addClientConnection,
         removeClientConnection: removeClientConnection,
-        broadcastMessage: broadcastMessage,
         activeConnCount: activeConnCount,
-        sendMessage: sendMessage
+        notify: notify,
+        broadcastNotify: broadcastNotify,
+        broadcastMessage: broadcastMessage,
     }
 }

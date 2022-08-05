@@ -27,34 +27,26 @@ server.addService(proto.AdvancedChatServer.service, {
                     nickname = data.nickname;
 
                     let userCount = chatManager.activeConnCount();
-                    chatManager.sendMessage(stubId, {
-                        type: "NOFICATION",
-                        name: "Server",
-                        message: `There ${userCount > 1 ? "are" : "is"} ${userCount} active users`
-                    })
+                    chatManager.notify(stubId,
+                        `There ${userCount > 1 ? "are" : "is"} ${userCount} active users`);
 
-                    chatManager.broadcastMessage({
-                        type: "NOFICATION",
-                        name: "Server",
-                        message: `${nickname} joined`
-                    }, stubId); 
+                    chatManager.broadcastNotify(`${nickname} joined`, stubId); 
                 }
                 
                 return;
             }
             
             if(data.type == "MESSAGE")
-                chatManager.broadcastMessage(data, stubId);
+                chatManager.broadcastMessage({
+                    nickname: nickname,
+                    message: data.message
+                }, stubId);
         });
 
         call.on('end', () => {
             if(stubId) {
                 chatManager.removeClientConnection(stubId);
-                chatManager.broadcastMessage({
-                    type: "NOFICATION",
-                    name: "Server",
-                    message: `${nickname} left`
-                }, stubId);   
+                chatManager.broadcastNotify(`${nickname} left`, stubId);   
             }
             call.end();
         });

@@ -1,5 +1,11 @@
 # Advanced Chat using gRPC
 
+<br>
+
+![](./advanced-chat/static/chat-exemple.png)
+
+<br>
+
 # Activity 1
 
 This activity aims to create a chat using gRPC between the server and client.
