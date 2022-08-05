@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+message ConversationMessage {
+  enum MessageType {
+    NOTIFICATION = 0;
+    MESSAGE = 1;
+    JOIN = 2;
+  }
+
+  required MessageType type = 1;
+  required string nickname = 2;
+  optional string message = 3;
+}
+
+service AdvancedChatServer {
+rpc chat (stream ConversationMessage) returns (stream ConversationMessage) {}
+}

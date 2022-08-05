@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+message Message {
+  required string name = 1;
+  required string message = 2;
+}
+
+service AdvancedChatServer {
+  rpc chat (stream Message) returns (stream Message) {}
+}

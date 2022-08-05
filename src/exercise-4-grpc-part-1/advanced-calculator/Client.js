@@ -10,7 +10,6 @@ const packageDefinition = protoLoader.loadSync(
     oneofs: true
   });
 const proto = grpc.loadPackageDefinition(packageDefinition);
-const net = require("net");
 
 const readline = require('readline');
 const rl = readline.createInterface({
