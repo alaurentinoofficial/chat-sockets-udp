@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <style>
+        #orders-table { width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <br/>
+        <h1>Orders</h1>
+        <br/>
+        <table id="orders-table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody id="order-table-body">
+            </tbody>
+        </table>
+    </div>
+    <script>
+        let ordersBody = document.querySelector("#order-table-body");
+
+        function fetchOrders() {
+            fetch("http://localhost:3000/orders")
+            .then(x => x.json())
+            .then(data => {
+                if(data.code == 0) {
+    
+                    data.body.map(x => {
+                        let row = document.createElement("tr");
+                        
+                        let id = document.createElement("td");
+                        id.innerHTML = x.id;
+            
+                        let name = document.createElement("td");
+                        name.innerHTML = x.name;
+                        
+                        let options = document.createElement("td");
+                        let authorizeBtn = document.createElement("button");
+                        authorizeBtn.className = "btn btn-success"
+                        authorizeBtn.innerHTML = "Authorize";
+                        authorizeBtn.addEventListener("click", (e) => {
+                            e.preventDefault();
+    
+                            fetch(`http://localhost:3000/orders/${x.id}/authorize`, {method: "POST"})
+                            .then(x => ordersBody.removeChild(row))
+                        })
+                        options.appendChild(authorizeBtn);
+            
+                        row.appendChild(id);
+                        row.appendChild(name);
+                        row.appendChild(options);
+            
+                        return row;
+                    })
+                    .forEach(x => ordersBody.appendChild(x));
+                }
+            })
+        }
+
+        fetchOrders();
+
+    </script>
+</body>
+</html>
